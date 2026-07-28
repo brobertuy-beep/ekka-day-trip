@@ -1,29 +1,28 @@
 <title>🎡 A day out on EKKA Show Day?</title>
 <style>
   :root{
-    color-scheme: dark;
-    --plum:#2b1b45; --plum2:#4a2a63; --plum3:#1c1230;
-    --red:#e8384f; --red-deep:#b31f36;
-    --pink:#ff8fb1;
-    --gold:#ffcb47; --gold-deep:#e0a41f;
+    color-scheme: light;
+    --sky:#6ec3fb; --sky2:#a6ddff; --sky-cut:#6ec3fb;
+    --red:#ff4d68; --red-deep:#e02a49;
+    --pink:#ff5fa2; --pink-deep:#e23c82;
+    --gold:#ffd23f; --gold-deep:#f0b400;
     --cream:#fff6ec; --cream2:#ffe9d2;
-    --ink:#33223a; --ink-soft:#6a5566;
-    --line:#3a2657;
-    --good:#39c47b;
+    --ink:#243049; --ink-soft:#5f6b82;
+    --line:#cfe0ee;
+    --good:#3bc46f;
     --disp:"Arial Narrow","Helvetica Neue Condensed",system-ui,sans-serif;
     --body:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-    --shadow:0 18px 40px rgba(12,6,26,.5);
+    --shadow:0 18px 40px rgba(30,70,120,.28);
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;overflow-x:hidden}
   body{
     min-height:100dvh;
     font-family:var(--body);
-    color:var(--cream);
+    color:var(--ink);
     background:
-      radial-gradient(120% 80% at 50% -10%, #6a3d84 0%, transparent 55%),
-      radial-gradient(90% 60% at 85% 110%, #7a2450 0%, transparent 50%),
-      linear-gradient(180deg,var(--plum) 0%, var(--plum3) 100%);
+      radial-gradient(42% 30% at 84% 9%, rgba(255,222,90,.95) 0%, rgba(255,222,90,0) 62%),
+      linear-gradient(180deg, #a6ddff 0%, #6ec3fb 46%, #bfe98f 46%, #8ddb5c 100%);
     background-attachment:fixed;
     display:flex; align-items:flex-start; justify-content:center;
     padding:22px 14px 40px;
@@ -31,19 +30,18 @@
     padding-right:max(14px, env(safe-area-inset-right));
     padding-bottom:max(30px, env(safe-area-inset-bottom));
   }
-  /* twinkling starfield / distant fair lights */
+  /* drifting daytime clouds */
   body::before{
-    content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.5;
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.9;
     background-image:
-      radial-gradient(1.4px 1.4px at 12% 22%, #ffe6a3 60%, transparent),
-      radial-gradient(1.2px 1.2px at 78% 14%, #ffd0e0 60%, transparent),
-      radial-gradient(1.6px 1.6px at 40% 8%,  #fff 60%, transparent),
-      radial-gradient(1.2px 1.2px at 62% 30%, #ffe6a3 60%, transparent),
-      radial-gradient(1.3px 1.3px at 90% 40%, #fff 60%, transparent),
-      radial-gradient(1.2px 1.2px at 22% 42%, #ffd0e0 60%, transparent);
-    animation:twinkle 4s ease-in-out infinite alternate;
+      radial-gradient(60px 24px at 18% 15%, rgba(255,255,255,.92), transparent 70%),
+      radial-gradient(84px 30px at 70% 9%,  rgba(255,255,255,.85), transparent 70%),
+      radial-gradient(50px 22px at 90% 22%, rgba(255,255,255,.8),  transparent 70%),
+      radial-gradient(70px 26px at 38% 26%, rgba(255,255,255,.72), transparent 70%);
+    background-repeat:no-repeat;
+    animation:drift 20s ease-in-out infinite alternate;
   }
-  @keyframes twinkle{from{opacity:.28}to{opacity:.6}}
+  @keyframes drift{from{transform:translateX(-12px)}to{transform:translateX(16px)}}
 
   .wrap{position:relative; z-index:1; width:100%; max-width:460px}
 
@@ -59,7 +57,7 @@
   /* perforation notches on the sides */
   .ticket::before, .ticket::after{
     content:""; position:absolute; top:96px; width:26px; height:26px;
-    background:var(--plum3); border-radius:50%;
+    background:var(--sky-cut); border-radius:50%;
   }
   .ticket::before{left:-13px}
   .ticket::after{right:-13px}
@@ -69,16 +67,16 @@
     position:relative;
     background:linear-gradient(180deg,var(--red) 0%, var(--red-deep) 100%);
     color:#fff; padding:20px 18px 18px; text-align:center;
-    border-bottom:3px dashed rgba(255,255,255,.55);
+    border-bottom:3px dashed rgba(255,255,255,.6);
   }
   .bulbs{position:absolute; top:7px; left:0; right:0; height:12px; display:flex; justify-content:space-around; padding:0 10px}
   .bulbs i{
     width:9px; height:9px; border-radius:50%;
     background:radial-gradient(circle at 35% 30%, #fff, var(--gold) 60%, var(--gold-deep));
-    box-shadow:0 0 7px 2px rgba(255,203,71,.8);
+    box-shadow:0 0 7px 2px rgba(255,210,63,.85);
     animation:blink 1.4s ease-in-out infinite;
   }
-  .bulbs i:nth-child(odd){animation-delay:.7s; background:radial-gradient(circle at 35% 30%, #fff, var(--pink) 60%, #d95c86); box-shadow:0 0 7px 2px rgba(255,143,177,.75)}
+  .bulbs i:nth-child(odd){animation-delay:.7s; background:radial-gradient(circle at 35% 30%, #fff, var(--pink) 60%, var(--pink-deep)); box-shadow:0 0 7px 2px rgba(255,95,162,.8)}
   @keyframes blink{0%,100%{opacity:1}50%{opacity:.32}}
 
   .kicker{
@@ -91,7 +89,7 @@
     font-size:clamp(1.9rem, 8.5vw, 2.7rem); margin:6px 4px 2px;
     text-shadow:0 2px 0 var(--red-deep);
   }
-  .marquee .sub{font-size:.9rem; opacity:.92; margin:6px 0 2px}
+  .marquee .sub{font-size:.9rem; opacity:.95; margin:6px 0 2px}
 
   /* body / stub */
   .stub{padding:22px 20px 24px; min-height:230px; display:flex; flex-direction:column}
@@ -108,7 +106,7 @@
 
   /* progress lights */
   .progress{display:flex; gap:6px; align-items:center; padding:14px 20px 0}
-  .progress i{height:6px; flex:1; border-radius:99px; background:rgba(51,34,58,.14)}
+  .progress i{height:6px; flex:1; border-radius:99px; background:rgba(36,48,73,.14)}
   .progress i.on{background:linear-gradient(90deg,var(--red),var(--pink))}
 
   /* controls */
@@ -118,7 +116,7 @@
     background:#fff; border:2px solid #e7d8c6; border-radius:12px;
     padding:13px 14px; outline:none; -webkit-appearance:none;
   }
-  input:focus, textarea:focus{border-color:var(--red); box-shadow:0 0 0 3px rgba(232,56,79,.16)}
+  input:focus, textarea:focus{border-color:var(--red); box-shadow:0 0 0 3px rgba(255,77,104,.18)}
   textarea{min-height:92px; resize:vertical}
   ::placeholder{color:#b7a894}
 
@@ -145,13 +143,13 @@
   .btn:active{transform:translateY(1px)}
   .btn-primary{
     background:linear-gradient(180deg,var(--red),var(--red-deep)); color:#fff; flex:1;
-    box-shadow:0 6px 0 #8a1729;
+    box-shadow:0 6px 0 #b01f3a;
   }
-  .btn-primary:disabled{filter:grayscale(.5) opacity(.6); box-shadow:0 6px 0 #8a1729; cursor:not-allowed}
+  .btn-primary:disabled{filter:grayscale(.5) opacity(.6); box-shadow:0 6px 0 #b01f3a; cursor:not-allowed}
   .btn-ghost{
     background:transparent; color:var(--ink-soft); border:2px solid #e2d3c2; padding:12px 14px;
   }
-  .btn-gold{background:linear-gradient(180deg,var(--gold),var(--gold-deep)); color:#4a2f00; box-shadow:0 6px 0 #a9760f}
+  .btn-gold{background:linear-gradient(180deg,var(--gold),var(--gold-deep)); color:#4a2f00; box-shadow:0 6px 0 #b8860b}
 
   /* the big ask + runaway NO */
   .ask{text-align:center}
@@ -175,8 +173,8 @@
   .reminders li .em{position:absolute; left:12px; top:12px; font-size:1.3rem}
   .reminders small{display:block; color:var(--ink-soft); margin-top:5px; font-size:.86rem}
 
-  .foot{ text-align:center; color:rgba(255,255,255,.62); font-size:.78rem; margin:16px 6px 0; line-height:1.5 }
-  .foot b{color:var(--pink)}
+  .foot{ text-align:center; color:rgba(20,45,80,.75); font-size:.78rem; margin:16px 6px 0; line-height:1.5 }
+  .foot b{color:var(--red-deep)}
 
   /* confetti */
   .confetti{position:fixed; top:-12px; width:10px; height:14px; z-index:60; pointer-events:none; border-radius:2px}
@@ -192,14 +190,14 @@
         <div class="bulbs" aria-hidden="true"></div>
         <p class="kicker">Admit two · Royal Queensland Show</p>
         <h1 id="title">EKKA Show&nbsp;Day</h1>
-        <p class="sub" id="subtitle">One ride ticket, made just for you 🎡</p>
+        <p class="sub" id="subtitle">One golden ticket. No refunds. 🎡</p>
       </div>
 
       <div class="progress" id="progress" aria-hidden="true"></div>
 
       <div class="stub" id="stub"><!-- steps render here --></div>
     </div>
-    <p class="foot">Made with a bit of fairy floss for <b id="footname">you</b> · view it anywhere, even on your phone 📱</p>
+    <p class="foot">Made with fairy floss and zero restraint for <b id="footname">you</b> · works on any phone 📱</p>
   </div>
 
 <script>
@@ -213,7 +211,7 @@
   var NAME = rawName ? titleCase(rawName.replace(/[<>]/g,"").slice(0,40)) : "";
   var HOST_EMAIL = "brobert.uy@gmail.com";   // where answers land + who gets the calendar invite
 
-  document.getElementById("subtitle").textContent = NAME ? ("One ride ticket, made just for " + NAME + " 🎡") : "One ride ticket, made just for you 🎡";
+  document.getElementById("subtitle").textContent = NAME ? ("Yes, this whole thing is for " + NAME + " 🎡") : "One golden ticket. No refunds. 🎡";
   document.getElementById("footname").textContent = NAME || "you";
   if (NAME) document.title = "🎡 " + NAME + ", a day out on EKKA Show Day?";
 
@@ -229,7 +227,7 @@
 
   var CUISINES = ["Italian","Thai","Japanese","Vietnamese","Chinese","Indian","Modern Australian","Korean","Greek","Mexican"];
   var DIETS = [["Vegetarian","🥕"],["Vegan","🌱"],["Pescatarian","🐟"],["Fruitarian","🍓"],["Keto","🥑"],["Gluten free","🌾"],["None","🍽️"]];
-  var ACTS = [["Movies","🎬"],["Botanical gardens","🌿"],["Zoo","🦁"],["Hiking / easy trail","🥾"],["Brisbane Royal Showgrounds","🎡"],["Theme parks","🎢"],["Beach","🏖️"],["Picnic","🧺"]];
+  var ACTS = [["Movies","🎬"],["Botanical gardens","🌿"],["Zoo","🦁"],["Hiking / easy trail","🥾"],["Brisbane Royal Showgrounds","🎡"],["Theme parks","🎢"],["Beach","🏖️"],["Picnic","🧺"],["Live music / gig","🎶"],["Markets & galleries","🎨"],["Brewery / winery","🍻"]];
 
   /* meal type depends on the chosen time block */
   function mealWord(){ return A.time === "morning" ? "lunch" : "dinner"; }
@@ -265,7 +263,6 @@
   function goStep(id){ var f=flow(); var idx=f.indexOf(id); if(idx>=0){ pos=idx; render(); } }
 
   function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
-  var hey = NAME ? (NAME) : "you";
 
   /* ---------- renderers ---------- */
   function render(){
@@ -285,9 +282,9 @@
 
   RENDER.email = function(){
     stub.innerHTML =
-      '<p class="steplabel">First, the important bit</p>'+
+      '<p class="steplabel">First, the one serious question</p>'+
       '<h2 class="q">Where do I send the calendar invite?</h2>'+
-      '<p class="hint">Pop your email in so the day can land straight in your calendar. That\'s the only thing I need up front.</p>'+
+      '<p class="hint">Drop your email so this day can ambush your calendar. That\'s the only grown-up bit, promise.</p>'+
       '<div class="field"><input type="email" id="email" inputmode="email" autocomplete="email" placeholder="you@email.com" value="'+esc(A.email)+'"></div>'+
       '<div class="nav">'+backBtn()+'<button class="btn btn-primary" id="next" disabled>Next</button></div>';
     var em = document.getElementById("email");
@@ -303,9 +300,9 @@
   RENDER.ask = function(){
     stub.innerHTML =
       '<div class="ask">'+
-        '<p class="steplabel">The actual question</p>'+
+        '<p class="steplabel">Okay, the actual question</p>'+
         '<h2 class="q" style="font-size:clamp(1.5rem,6.4vw,2rem)">'+ (NAME? esc(NAME)+', ':'') +'will you come on a day trip with me on EKKA Show Day?</h2>'+
-        '<p class="hint" style="text-align:center">Fair warning: this ticket doesn\'t come with a "no". 🎠</p>'+
+        '<p class="hint" style="text-align:center">Small heads up: the "No" button has severe commitment issues. 🎠</p>'+
         '<div class="yesno">'+
           '<button id="yesBtn">Yes! 🎉</button>'+
           '<button id="noBtn">No</button>'+
@@ -314,7 +311,7 @@
     var yes = document.getElementById("yesBtn");
     var no  = document.getElementById("noBtn");
     var dodges = 0;
-    var taunts = ["No","Nice try 😄","Nope, can\'t","Too slow!","Catch me!","Really? 🙃","Not today","Hah!"];
+    var taunts = ["No","Nice try 😄","Nope","Can\'t catch me","Too slow!","Missed me!","Not a chance","Keep dreaming","😘 no","Byeee 👋"];
 
     function dodge(){
       dodges++;
@@ -338,12 +335,12 @@
 
   RENDER.day = function(){
     stub.innerHTML =
-      '<p class="steplabel">A quick consideration</p>'+
+      '<p class="steplabel">Boring-but-necessary logistics</p>'+
       '<h2 class="q">Is it still Show Day — Wed 12 Aug 2026?</h2>'+
-      '<p class="hint">Some workplaces let you swap the EKKA public holiday for another day. Which is it for you?</p>'+
+      '<p class="hint">Some legends swap the EKKA holiday for a different day. Which flavour of legend are you?</p>'+
       '<div class="opts">'+
         optRow("day","same","📅","Still the same — Wed 12 August 2026")+
-        optRow("day","swapped","🔁","I swapped my Show Day to a different date")+
+        optRow("day","swapped","🔁","I swapped my Show Day to another date")+
       '</div>'+
       '<div class="nav">'+backBtn()+'<button class="btn btn-primary" id="next" '+(A.day?'':'disabled')+'>Next</button></div>';
     wireOpts("day", function(){ document.getElementById("next").disabled=false; });
@@ -353,8 +350,8 @@
   RENDER.swapDate = function(){
     stub.innerHTML =
       '<p class="steplabel">Your swapped day</p>'+
-      '<h2 class="q">Which date works instead?</h2>'+
-      '<p class="hint">Pick the day you\'ll take off — I\'ll set the calendar invite to match.</p>'+
+      '<h2 class="q">Which date did you nab instead?</h2>'+
+      '<p class="hint">Pick the day you\'re taking off — I\'ll make the calendar invite match.</p>'+
       '<div class="field"><input type="date" id="swap" value="'+esc(A.swapDate)+'"></div>'+
       '<div class="nav">'+backBtn()+'<button class="btn btn-primary" id="next" '+(A.swapDate?'':'disabled')+'>Next</button></div>';
     var d = document.getElementById("swap");
@@ -364,13 +361,13 @@
 
   RENDER.time = function(){
     stub.innerHTML =
-      '<p class="steplabel">How much of the day?</p>'+
-      '<h2 class="q">Pick your time block</h2>'+
-      '<p class="hint">However much suits you — no pressure either way.</p>'+
+      '<p class="steplabel">Dosage</p>'+
+      '<h2 class="q">How much of me can you handle?</h2>'+
+      '<p class="hint">No wrong answer. (Well, one, but you won\'t pick it.)</p>'+
       '<div class="opts">'+
         optRow("time","morning","🌅","Half day — morning · 8am–3pm")+
         optRow("time","afternoon","🌇","Half day — afternoon · 11am–6pm")+
-        optRow("time","full","☀️","Full day · 8am–6pm")+
+        optRow("time","full","☀️","Full day · 8am–6pm (brave)")+
       '</div>'+
       '<div class="nav">'+backBtn()+'<button class="btn btn-primary" id="next" '+(A.time?'':'disabled')+'>Next</button></div>';
     wireOpts("time", function(){ A.meal=""; A.cuisine=""; document.getElementById("next").disabled=false; });
@@ -381,13 +378,13 @@
     var word = mealWord();
     stub.innerHTML =
       '<p class="steplabel">Add-on</p>'+
-      '<h2 class="q">Fancy '+word+' too?</h2>'+
+      '<h2 class="q">Shall we do '+word+' as well?</h2>'+
       '<p class="hint">'+ (word==="lunch"
-          ? "Since it\'s a morning out, we could grab a bite around midday."
-          : "We could round the day off with a proper feed.") +'</p>'+
+          ? "It\'s a morning out, so midday food is very much on the table (literally)."
+          : "I have this recurring condition called being hungry. We could treat it together.") +'</p>'+
       '<div class="opts">'+
-        optRow("meal","yes","🍽️","Yes please — let\'s do "+word)+
-        optRow("meal","no","🙂","No thanks, just the day out")+
+        optRow("meal","yes","🍽️","Yes — feed me, let\'s do "+word)+
+        optRow("meal","no","🙂","Nah, just the day out")+
       '</div>'+
       '<div class="nav">'+backBtn()+'<button class="btn btn-primary" id="next" '+(A.meal?'':'disabled')+'>Next</button></div>';
     wireOpts("meal", function(){ if(A.meal==="no") A.cuisine=""; document.getElementById("next").disabled=false; });
@@ -399,8 +396,8 @@
     var rows = CUISINES.map(function(c){ return optRow("cuisine", c, "", c); }).join("");
     stub.innerHTML =
       '<p class="steplabel">For '+word+'</p>'+
-      '<h2 class="q">What cuisine are you feeling?</h2>'+
-      '<p class="hint">Ten of Brisbane\'s finest. Pick whatever your tastebuds fancy.</p>'+
+      '<h2 class="q">What are your tastebuds feeling?</h2>'+
+      '<p class="hint">Ten of Brisbane\'s finest. Choose wisely — or don\'t, I\'ll still show up.</p>'+
       '<div class="opts">'+rows+'</div>'+
       '<div class="nav">'+backBtn()+'<button class="btn btn-primary" id="next" '+(A.cuisine?'':'disabled')+'>Next</button></div>';
     wireOpts("cuisine", function(){ document.getElementById("next").disabled=false; });
@@ -409,11 +406,11 @@
 
   RENDER.pets = function(){
     stub.innerHTML =
-      '<p class="steplabel">The furry (or feathered) ones</p>'+
-      '<h2 class="q">Do you have any pets?</h2>'+
-      '<p class="hint">Just so we can plan the day around them if we need to.</p>'+
+      '<p class="steplabel">Very important intel</p>'+
+      '<h2 class="q">Any pets I\'ll need to win over?</h2>'+
+      '<p class="hint">Purely so I can plan my charm offensive in advance.</p>'+
       '<div class="opts">'+
-        optRow("pets","yes","🐾","Yes, I\'ve got a pet (or a few)")+
+        optRow("pets","yes","🐾","Yes — I\'ve got a pet (or a small zoo)")+
         optRow("pets","no","🚫","Nope, no pets")+
       '</div>'+
       '<div class="nav">'+backBtn()+'<button class="btn btn-primary" id="next" '+(A.pets?'':'disabled')+'>Next</button></div>';
@@ -423,11 +420,11 @@
 
   RENDER.petPlan = function(){
     stub.innerHTML =
-      '<p class="steplabel">Your pets</p>'+
-      '<h2 class="q">Leave them home, or bring them along?</h2>'+
-      '<p class="hint">Whatever they\'d be happiest with.</p>'+
+      '<p class="steplabel">The entourage</p>'+
+      '<h2 class="q">Leave them home, or bring the crew?</h2>'+
+      '<p class="hint">Whatever keeps them (and you) happiest.</p>'+
       '<div class="opts">'+
-        optRow("petPlan","bring","🐕","Bring them with us")+
+        optRow("petPlan","bring","🐕","Bring them — the more the merrier")+
         optRow("petPlan","leave","🏠","Leave them cosy at home")+
       '</div>'+
       '<div class="nav">'+backBtn()+'<button class="btn btn-primary" id="next" '+(A.petPlan?'':'disabled')+'>Next</button></div>';
@@ -440,7 +437,7 @@
     stub.innerHTML =
       '<p class="steplabel">Good to know</p>'+
       '<h2 class="q">Any dietary requirements?</h2>'+
-      '<p class="hint">So every bite of the day actually works for you.</p>'+
+      '<p class="hint">So I don\'t heroically order you something you can\'t actually eat.</p>'+
       '<div class="opts">'+rows+'</div>'+
       '<div class="nav">'+backBtn()+'<button class="btn btn-primary" id="next" '+(A.diet?'':'disabled')+'>Next</button></div>';
     wireOpts("diet", function(){ document.getElementById("next").disabled=false; });
@@ -452,7 +449,7 @@
     stub.innerHTML =
       '<p class="steplabel">Pick up to 3</p>'+
       '<h2 class="q">What kind of day suits you?</h2>'+
-      '<p class="hint">Choose up to three. And if nothing quite fits — tell me something you\'ve always wanted to try.</p>'+
+      '<p class="hint">Choose up to three. If nothing tickles you, tell me the thing you\'ve always wanted to try (within reason — no bank heists).</p>'+
       '<div class="opts">'+rows+'</div>'+
       '<div class="field" style="margin-top:14px"><input type="text" id="trynew" maxlength="140" placeholder="Something you\'ve always wanted to try? (optional)" value="'+esc(A.tryNew)+'"></div>'+
       '<div class="nav">'+backBtn()+'<button class="btn btn-primary" id="next">Next</button></div>';
@@ -482,9 +479,9 @@
 
   RENDER.notes = function(){
     stub.innerHTML =
-      '<p class="steplabel">Over to you</p>'+
+      '<p class="steplabel">Open mic</p>'+
       '<h2 class="q">Anything else I should know?</h2>'+
-      '<p class="hint">Allergies, a hard stop time, a wish, a warning — anything at all. Totally optional.</p>'+
+      '<p class="hint">Allergies, curfews, red flags, green flags, dealbreakers — spill it. Totally optional.</p>'+
       '<div class="field"><textarea id="notes" maxlength="600" placeholder="Type anything here…">'+esc(A.notes)+'</textarea></div>'+
       '<div class="nav">'+backBtn()+'<button class="btn btn-primary" id="next">Next</button></div>';
     var n=document.getElementById("notes");
@@ -496,11 +493,11 @@
     stub.innerHTML =
       '<p class="steplabel">A few little reminders</p>'+
       '<h2 class="q">Just bring these along 🎪</h2>'+
-      '<p class="hint">No need to type anything — these are just notes to tuck in your pocket for the day.</p>'+
+      '<p class="hint">No typing needed — these are just notes to shove in your pocket for the day.</p>'+
       '<ul class="reminders">'+
-        '<li><span class="em">✨</span>Bring your quirky attitude.</li>'+
-        '<li><span class="em">💭</span>Have a think: did you change your mind about anything in the last few years?<small>If yes — what was it, and why?</small></li>'+
-        '<li><span class="em">🦸</span>And one for the road: if you had a superpower, what would it be — and why?</li>'+
+        '<li><span class="em">✨</span>Bring your quirky attitude. Strictly non-negotiable.</li>'+
+        '<li><span class="em">💭</span>Have a think: did you change your mind about anything the last few years?<small>If yes — what was it, and why? (I\'m nosy.)</small></li>'+
+        '<li><span class="em">🦸</span>And one for the road: if you had a superpower, what would it be — and why?<small>Correct answers only. (Kidding. Mostly.)</small></li>'+
       '</ul>'+
       '<div class="nav">'+backBtn()+'<button class="btn btn-primary" id="next">Almost done →</button></div>';
     wireNext(); wireBack();
@@ -508,7 +505,7 @@
 
   /* ---------- finish: build calendar invite + email ---------- */
   function dateParts(){
-    // returns {ymd:"20260812", label:"Wednesday, 12 August 2026"}
+    // returns {ymd:"20260812", label:"Wednesday 12 August 2026"}
     var d;
     if (A.day === "swapped" && A.swapDate){ d = new Date(A.swapDate + "T00:00:00"); }
     else { d = new Date("2026-08-12T00:00:00"); }
@@ -571,13 +568,13 @@
     stub.innerHTML =
       '<div class="ask">'+
       '<p class="steplabel">That\'s everything 🎉</p>'+
-      '<h2 class="q">You\'re all set'+(NAME?(", "+esc(NAME)):"")+'!</h2>'+
-      '<p class="hint" style="text-align:center">Here\'s the plan: <b>'+esc(dp.label)+'</b>, '+esc(tr[2])+'.<br>Tap below to send your answers straight into the calendar invite.</p>'+
+      '<h2 class="q">You\'re locked in'+(NAME?(", "+esc(NAME)):"")+'!</h2>'+
+      '<p class="hint" style="text-align:center">The plan: <b>'+esc(dp.label)+'</b>, '+esc(tr[2])+'.<br>Tap below to fling your answers straight into the calendar invite.</p>'+
       '<div style="display:flex;flex-direction:column;gap:12px;margin-top:18px">'+
-        '<button class="btn btn-primary" id="cal" style="box-shadow:0 6px 0 #8a1729">📅 Send it — add to Google Calendar</button>'+
-        '<button class="btn btn-gold" id="mail">✉️ Send my answers by email instead</button>'+
+        '<button class="btn btn-primary" id="cal" style="box-shadow:0 6px 0 #b01f3a">📅 Send it — hurl it into Google Calendar</button>'+
+        '<button class="btn btn-gold" id="mail">✉️ Email me your answers instead</button>'+
       '</div>'+
-      '<p class="hint" style="text-align:center;margin-top:14px">Your answers go to me so I can lock in the day. Can\'t wait 🍓</p>'+
+      '<p class="hint" style="text-align:center;margin-top:14px">Your answers come straight to me so I can lock it in. Try to contain your excitement. 🍓</p>'+
       '<div class="nav" style="justify-content:center">'+backBtn()+'</div>'+
       '</div>';
     document.getElementById("cal").addEventListener("click", function(){ celebrate(); window.open(calendarURL(), "_blank", "noopener"); });
@@ -612,16 +609,13 @@
   }
   function wireBack(){
     var b=stub.querySelector("[data-back]");
-    if(b) b.addEventListener("click", function(){
-      // clean up any loose NO button before leaving the ask screen
-      go(-1);
-    });
+    if(b) b.addEventListener("click", function(){ go(-1); });
   }
 
   /* ---------- confetti ---------- */
   function celebrate(){
     if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    var colors=["#e8384f","#ffcb47","#ff8fb1","#39c47b","#7aa8ff","#fff"];
+    var colors=["#ff4d68","#ffd23f","#ff5fa2","#3bc46f","#6ec3fb","#fff"];
     for(var i=0;i<80;i++){
       (function(){
         var c=document.createElement("div"); c.className="confetti";
