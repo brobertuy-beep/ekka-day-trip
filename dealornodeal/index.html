@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0326">
+<title>Deal or No Deal?</title>
+<meta property="og:title" content="I have a question for you…">
+<meta property="og:description" content="Tap to play. Deal or No Deal?">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>
+  :root{
+    --gold:#ffcf40; --gold-2:#e8a800; --deep:#0a0326; --deep-2:#1a0a4a;
+    --red:#e11d48; --rose:#ff5c8a; --ink:#fff; --panel:rgba(255,255,255,.06);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"Trebuchet MS","Segoe UI",system-ui,-apple-system,sans-serif;
+    color:var(--ink);
+    background:radial-gradient(120% 80% at 50% -10%,#3a1170 0%,var(--deep-2) 45%,var(--deep) 100%);
+    min-height:100vh; min-height:100dvh; overflow-x:hidden;
+  }
+  /* stage lights sweep */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:
+      radial-gradient(60% 40% at 20% 0%,rgba(255,207,64,.10),transparent 60%),
+      radial-gradient(60% 40% at 80% 0%,rgba(255,92,138,.10),transparent 60%);
+  }
+  .wrap{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:22px 16px 60px}
+  .screen{display:none;animation:fade .5s ease both}
+  .screen.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  h1.logo{
+    text-align:center;line-height:.95;margin:6px 0 2px;font-weight:900;letter-spacing:1px;
+    text-transform:uppercase;
+  }
+  h1.logo .big{
+    display:block;font-size:clamp(34px,12vw,64px);
+    background:linear-gradient(180deg,#fff 0%,var(--gold) 45%,var(--gold-2) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 2px 0 rgba(0,0,0,.25);
+    filter:drop-shadow(0 3px 10px rgba(255,207,64,.35));
+  }
+  .logo .or{display:block;font-size:clamp(15px,5vw,22px);color:var(--rose);letter-spacing:6px;margin:2px 0}
+  .sub{text-align:center;color:#d9d2ff;font-size:15px;margin:10px 4px 0;line-height:1.5}
+  .hi{color:var(--gold);font-weight:800}
+
+  .btn{
+    display:block;width:100%;border:0;cursor:pointer;font-family:inherit;font-weight:800;
+    padding:16px 20px;border-radius:16px;font-size:17px;margin:12px 0;letter-spacing:.4px;
+    transition:transform .12s ease, box-shadow .2s ease; touch-action:manipulation;
+  }
+  .btn:active{transform:scale(.97)}
+  .btn.gold{background:linear-gradient(180deg,var(--gold),var(--gold-2));color:#3a2500;
+    box-shadow:0 8px 22px rgba(255,207,64,.35)}
+  .btn.deal{background:linear-gradient(180deg,#34d399,#059669);color:#04231a;
+    box-shadow:0 8px 22px rgba(16,185,129,.35)}
+  .btn.no{background:linear-gradient(180deg,#fb7185,var(--red));color:#2a0410;
+    box-shadow:0 8px 22px rgba(225,29,72,.35)}
+  .btn.ghost{background:var(--panel);color:#fff;border:1px solid rgba(255,255,255,.18);box-shadow:none}
+
+  .host{
+    width:118px;height:118px;border-radius:50%;margin:16px auto 6px;display:block;
+    object-fit:cover;border:4px solid var(--gold);
+    box-shadow:0 0 0 6px rgba(255,207,64,.18),0 12px 30px rgba(0,0,0,.5);
+  }
+  .host-name{text-align:center;color:#cdbfff;font-size:13px;letter-spacing:2px;text-transform:uppercase}
+
+  /* CASES GRID */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+  @media(min-width:460px){.grid{grid-template-columns:repeat(4,1fr)}}
+  .case{
+    position:relative;aspect-ratio:1/.82;border:0;cursor:pointer;border-radius:12px;
+    background:linear-gradient(155deg,#4a2f00,#1c1200);padding:0;overflow:hidden;
+    box-shadow:0 6px 14px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.08);
+    transition:transform .12s ease, filter .2s ease; touch-action:manipulation;
+  }
+  .case:active{transform:scale(.94)}
+  .case .lid{
+    position:absolute;inset:0;
+    background:
+      linear-gradient(180deg,rgba(255,255,255,.14),transparent 40%),
+      linear-gradient(155deg,var(--gold) 0%,var(--gold-2) 55%,#7a5a00 100%);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .case .num{
+    font-weight:900;font-size:clamp(20px,7vw,30px);color:#2a1900;
+    text-shadow:0 1px 0 rgba(255,255,255,.35);
+  }
+  .case .handle{position:absolute;top:7%;left:50%;transform:translateX(-50%);
+    width:34%;height:7px;border-radius:6px;background:#2a1900;opacity:.55}
+  .case.gone{filter:grayscale(.6) brightness(.5);pointer-events:none}
+  .hint{text-align:center;color:#cdbfff;font-size:14px;margin:18px 4px 0}
+
+  /* MODAL */
+  .modal{
+    position:fixed;inset:0;z-index:40;display:none;align-items:flex-start;justify-content:center;
+    padding:22px 14px;overflow-y:auto;
+    background:radial-gradient(120% 90% at 50% 0%,#241056 0%,#0a0326 80%);
+  }
+  .modal.active{display:flex;animation:fade .5s ease both}
+  .card{
+    max-width:560px;width:100%;margin:auto;background:var(--panel);
+    border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:24px 20px 26px;
+    backdrop-filter:blur(6px);box-shadow:0 20px 60px rgba(0,0,0,.5);
+  }
+  .card h2{margin:2px 0 4px;text-align:center;font-size:22px;color:var(--gold)}
+  .letter{font-size:16.5px;line-height:1.72;color:#efeaff;letter-spacing:.1px}
+  .letter p{margin:0 0 15px}
+  .sig{color:var(--rose);font-weight:800;margin-top:2px;text-align:right}
+  .heartrule{height:1px;background:linear-gradient(90deg,transparent,rgba(255,207,64,.6),transparent);margin:18px 0}
+
+  /* QUESTION */
+  .qwrap{text-align:center;padding-top:8px}
+  .million{font-size:clamp(24px,8vw,40px);font-weight:900;margin:6px 0 2px;
+    background:linear-gradient(180deg,#fff,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .glow{filter:drop-shadow(0 0 14px rgba(255,207,64,.45))}
+
+  /* CELEBRATION */
+  #celebrate{text-align:center}
+  .dancer{width:170px;height:230px;margin:10px auto 0;position:relative}
+  .d-body{position:absolute;left:50%;top:70px;width:74px;height:96px;margin-left:-37px;
+    background:linear-gradient(180deg,#2b2b3a,#14141d);border-radius:26px 26px 18px 18px;
+    animation:sway .5s ease-in-out infinite alternate;transform-origin:50% 0}
+  .d-head{position:absolute;left:50%;top:6px;width:76px;height:76px;margin-left:-38px;border-radius:50%;
+    background-size:cover;background-position:center;border:3px solid var(--gold);
+    box-shadow:0 6px 16px rgba(0,0,0,.5);z-index:3;
+    animation:bop .5s ease-in-out infinite alternate}
+  .arm{position:absolute;top:80px;width:20px;height:64px;background:#20202c;border-radius:12px;z-index:2}
+  .arm.l{left:34px;transform-origin:top center;animation:armL .5s ease-in-out infinite alternate}
+  .arm.r{right:34px;transform-origin:top center;animation:armR .5s ease-in-out infinite alternate}
+  .leg{position:absolute;top:160px;width:22px;height:60px;background:#14141d;border-radius:10px}
+  .leg.l{left:60px;transform-origin:top center;animation:legL .5s ease-in-out infinite alternate}
+  .leg.r{right:60px;transform-origin:top center;animation:legR .5s ease-in-out infinite alternate}
+  @keyframes bop{from{transform:translateY(0) rotate(-5deg)}to{transform:translateY(-8px) rotate(5deg)}}
+  @keyframes sway{from{transform:rotate(-4deg)}to{transform:rotate(4deg)}}
+  @keyframes armL{from{transform:rotate(20deg)}to{transform:rotate(150deg)}}
+  @keyframes armR{from{transform:rotate(-150deg)}to{transform:rotate(-20deg)}}
+  @keyframes legL{from{transform:rotate(-18deg)}to{transform:rotate(14deg)}}
+  @keyframes legR{from{transform:rotate(14deg)}to{transform:rotate(-18deg)}}
+  .countdown{color:#cdbfff;font-size:13px;letter-spacing:1px;margin-top:8px}
+
+  /* confetti */
+  #confetti{position:fixed;inset:0;pointer-events:none;z-index:60;display:none}
+  #confetti.on{display:block}
+
+  /* REMINDER KEEPSAKE */
+  .keepsake{margin-top:34px;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03));
+    border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:20px 18px}
+  .keepsake h3{margin:0 0 4px;text-align:center;color:var(--gold);font-size:18px}
+  .keepsake .lead{text-align:center;color:#d4ccff;font-size:14px;margin:0 0 14px;line-height:1.5}
+  .keys{display:flex;flex-direction:column;gap:10px}
+  .key{display:flex;gap:13px;align-items:flex-start;background:rgba(0,0,0,.22);
+    border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;cursor:pointer;
+    transition:transform .12s ease;touch-action:manipulation}
+  .key:active{transform:scale(.98)}
+  .key .n{flex:0 0 40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+    font-weight:900;font-size:19px;color:#2a1900;background:linear-gradient(180deg,var(--gold),var(--gold-2))}
+  .key .t{font-size:14.5px;line-height:1.45;color:#efeaff}
+  .key .t b{color:#fff}
+  .key .reveal{display:none;margin-top:6px;color:var(--rose);font-style:italic;font-size:13.5px}
+  .key.open .reveal{display:block;animation:fade .3s ease both}
+  .askback{margin-top:16px;text-align:center;color:#efeaff;font-size:14.5px;line-height:1.55}
+  .askback b{color:var(--gold)}
+
+  .foot{text-align:center;color:#7c74a8;font-size:11px;margin-top:30px;line-height:1.6}
+  .mute{position:fixed;top:12px;right:12px;z-index:70;width:42px;height:42px;border-radius:50%;
+    border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.35);color:#fff;font-size:18px;cursor:pointer}
+  .tiny{font-size:12px;color:#9d95c9;text-align:center;margin-top:6px}
+</style>
+</head>
+<body>
+<button class="mute" id="mute" title="Sound on/off" aria-label="Toggle sound">🔊</button>
+<canvas id="confetti"></canvas>
+
+<div class="wrap">
+
+  <!-- ============ SCREEN 1: INTRO ============ -->
+  <section class="screen active" id="s-intro">
+    <img class="host" src="brian.jpg" alt="Brian">
+    <div class="host-name">Your host, Brian</div>
+    <h1 class="logo">
+      <span class="big">Deal</span>
+      <span class="or">— or —</span>
+      <span class="big">No Deal</span>
+    </h1>
+    <p class="sub">Welcome to the show, <span class="hi" id="name1">friend</span>.<br>
+      There's a question hidden in one of these cases…<br>and honestly, it's in <em>all</em> of them.</p>
+    <button class="btn gold" id="start">▶  Let's Play</button>
+    <p class="tiny">Best with the sound on 🎵</p>
+  </section>
+
+  <!-- ============ SCREEN 2: CASES ============ -->
+  <section class="screen" id="s-cases">
+    <h1 class="logo"><span class="big" style="font-size:clamp(24px,8vw,40px)">Pick a case</span></h1>
+    <p class="sub"><span class="hi" id="name2">friend</span>, tap any briefcase to open it.</p>
+    <div class="grid" id="grid"></div>
+    <p class="hint">Go on… they're all holding the same thing 💛</p>
+  </section>
+
+</div>
+
+<!-- ============ MODAL: THE MESSAGE ============ -->
+<div class="modal" id="m-letter">
+  <div class="card">
+    <h2>You opened Case <span id="caseNo">?</span></h2>
+    <div class="heartrule"></div>
+    <div class="letter" id="letterBody"><!-- filled by JS --></div>
+    <div class="heartrule"></div>
+    <div class="qwrap">
+      <p class="sub" style="margin-top:2px">And so, the million-dollar question…</p>
+      <div class="million glow">Deal or No Deal?</div>
+      <button class="btn deal" id="btnDeal">💚  DEAL</button>
+      <button class="btn no" id="btnNo">🥀  No Deal</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: FINAL ANSWER ============ -->
+<div class="modal" id="m-final">
+  <div class="card qwrap">
+    <img class="host" src="brian.jpg" alt="Brian" style="width:90px;height:90px">
+    <div class="million" style="font-size:clamp(20px,6vw,30px)">Is that your<br>final answer?</div>
+    <p class="sub">Take your time. No pressure, no rush — just honesty.</p>
+    <button class="btn no" id="finalYes">Yes — No Deal is my final answer</button>
+    <button class="btn deal" id="finalNo">Wait… actually, let me reconsider 💚</button>
+  </div>
+</div>
+
+<!-- ============ MODAL: UNDERSTAND ============ -->
+<div class="modal" id="m-understand">
+  <div class="card qwrap">
+    <div style="font-size:44px">🕊️</div>
+    <h2 style="color:#fff">I completely understand.</h2>
+    <p class="letter" style="text-align:center">
+      Thank you for being honest with me — that matters more than a "yes" ever could.
+      Nothing changes how I see you. The door stays open, no clock on it, and I'm still
+      grateful for every bit of these last two weeks.
+    </p>
+    <div class="heartrule"></div>
+    <p class="sub">…but before you go, one thing. Keep this. 👇</p>
+    <button class="btn ghost" id="toKeepsake1">See my note to you</button>
+  </div>
+</div>
+
+<!-- ============ MODAL: CELEBRATION (DEAL) ============ -->
+<div class="modal" id="m-deal">
+  <div class="card" id="celebrate">
+    <h2 style="color:#34d399;font-size:26px">DEAL!! 🎉</h2>
+    <p class="sub" style="margin-top:2px"><span class="hi" id="name3">You</span> just made my whole year.</p>
+    <div class="dancer">
+      <div class="d-head" id="dancerHead"></div>
+      <div class="arm l"></div><div class="arm r"></div>
+      <div class="d-body"></div>
+      <div class="leg l"></div><div class="leg r"></div>
+    </div>
+    <p class="countdown" id="cdText">Brian is dancing… 10</p>
+    <div class="heartrule"></div>
+    <p class="letter" style="text-align:center">Here we go — slowly, intentionally, together.
+      I'll bring the plan; you bring you. 💛</p>
+    <button class="btn gold" id="toKeepsake2" style="display:none">One more thing for you 👇</button>
+  </div>
+</div>
+
+<!-- ============ SCREEN 3: KEEPSAKE (reminder notes) ============ -->
+<div class="modal" id="m-keepsake">
+  <div class="card">
+    <div class="keepsake" style="margin-top:0;border:0;background:transparent;padding:0">
+      <h3>If you're ever missing me</h3>
+      <p class="lead">A little keepsake to hold onto. Whenever you miss me, at any hour:</p>
+      <div class="keys">
+        <div class="key" data-key="1">
+          <div class="n">1</div>
+          <div class="t"><b>Press 1</b> — for an original piece of literature I've written just for you.
+            <span class="reveal">Words made only for you. They'll always be waiting.</span></div>
+        </div>
+        <div class="key" data-key="2">
+          <div class="n">2</div>
+          <div class="t"><b>Press 2</b> — for a call from me.
+            <span class="reveal">Wherever, whenever. Pick up and I'm there.</span></div>
+        </div>
+        <div class="key" data-key="3">
+          <div class="n">3</div>
+          <div class="t"><b>Press 3</b> — for a meme that captures exactly how I'm feeling right now.
+            <span class="reveal">Because sometimes a ridiculous meme says it best. 😅</span></div>
+        </div>
+      </div>
+      <p class="askback">Can I do this to you, too?<br>
+        <b>I'll respond as humanly as possible.</b></p>
+    </div>
+    <div class="heartrule"></div>
+    <button class="btn ghost" id="replay">Play again ↻</button>
+    <p class="foot">Made with love, and a very serious game show budget.<br>
+      🎵 Original music • no networks needed • yours to keep.</p>
+  </div>
+</div>
+
+<script>
+/* ---------- Name from URL (?name=Sophie) ---------- */
+(function(){
+  var p=new URLSearchParams(location.search);
+  var raw=(p.get('name')||p.get('to')||p.get('n')||'').trim();
+  var name=raw ? raw.replace(/[<>]/g,'').slice(0,40) : '';
+  if(name){ name=name.charAt(0).toUpperCase()+name.slice(1); }
+  var shown=name||'friend';
+  ['name1','name2','name3'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.textContent=(id==='name3'?(name||'You'):shown);
+  });
+})();
+
+/* ---------- The message (Brian's own words) ---------- */
+document.getElementById('letterBody').innerHTML =
+`<p>I know that we've spent the last fortnight with more gusto, and the real challenge is between now and <b>3 November 2026</b> — but I want to know the depths of you, with or without physical presence.</p>
+<p>I want to know <em>you</em>, not just the surface things like your favourite foods or what side of the bed you sleep on. I want to know what your mind sounds like at 4am when you can't sleep and your thoughts wander. I want to understand your fears, the dreams you keep inside, and the version of you that hides when it's hurt.</p>
+<p>Tell me what you regret, what you overthink, what loneliness sounds like in your head when the house goes quiet. Tell me about your past — even the past you carry quietly, even the things you fear could change the way you're loved. I want to know it all: not to hold it against you, but because I want to know your heart properly.</p>
+<p>So open your heart to me slowly, at your pace, but with an end goal. I don't want to miss a thing. I don't need you to fall — love, crawl, or walk towards me if you have to.</p>
+<p>Let me be direct: I am building a relationship, and I'd like to build this slowly but intentionally with you — clarity on where I stand. I have a plan in mind, but I'd love your input, so we're on the same page. With the right intention and pace, I feel we can make this work. Please bear with me — this is new territory for me too.</p>`;
+
+/* ---------- Screens & modals ---------- */
+function show(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function openM(id){document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function closeM(id){document.getElementById(id).classList.remove('active');}
+
+/* set dancer face */
+document.getElementById('dancerHead').style.backgroundImage="url('brian.jpg')";
+
+/* ======================================================
+   AUDIO — original procedural music (Web Audio API)
+   No copyrighted material; nothing to download.
+====================================================== */
+var AudioEngine=(function(){
+  var ctx=null, master=null, muted=false, current=null, timers=[];
+  function ensure(){
+    if(!ctx){ var AC=window.AudioContext||window.webkitAudioContext; ctx=new AC();
+      master=ctx.createGain(); master.gain.value=0.0; master.connect(ctx.destination);
+      fade(master.gain,0.9,0.6);
+    }
+    if(ctx.state==='suspended') ctx.resume();
+  }
+  function fade(param,to,t){var now=ctx.currentTime;param.cancelScheduledValues(now);param.setValueAtTime(param.value,now);param.linearRampToValueAtTime(to,now+t);}
+  function clearTimers(){timers.forEach(clearInterval);timers.forEach(clearTimeout);timers=[];}
+  function note(freq,start,dur,type,vol,glideTo){
+    var o=ctx.createOscillator(),g=ctx.createGain();
+    o.type=type||'sine'; o.frequency.setValueAtTime(freq,start);
+    if(glideTo) o.frequency.exponentialRampToValueAtTime(glideTo,start+dur);
+    g.gain.setValueAtTime(0,start);
+    g.gain.linearRampToValueAtTime(vol||0.2,start+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0008,start+dur);
+    o.connect(g);g.connect(master);o.start(start);o.stop(start+dur+0.05);
+  }
+  // pad chord for warmth
+  function pad(freqs,start,dur,vol){
+    freqs.forEach(function(f){
+      var o=ctx.createOscillator(),g=ctx.createGain();
+      o.type='sine';o.frequency.value=f;
+      g.gain.setValueAtTime(0,start);g.gain.linearRampToValueAtTime(vol||0.05,start+0.6);
+      g.gain.linearRampToValueAtTime(vol||0.05,start+dur-0.6);
+      g.gain.linearRampToValueAtTime(0,start+dur);
+      o.connect(g);g.connect(master);o.start(start);o.stop(start+dur+0.05);
+    });
+  }
+  function stop(){clearTimers();current=null;if(master){fade(master.gain,0.0001,0.4);setTimeout(function(){if(master)master.gain.value=0.9;},450);}}
+
+  /* --- SUSPENSE: sparse, tense pulses (case picking) --- */
+  function suspense(){
+    ensure();stop();current='suspense';fade(master.gain,muted?0:0.55,0.5);
+    var step=0, scale=[130.81,146.83,155.56,196.00,207.65]; // moody
+    var iv=setInterval(function(){
+      if(current!=='suspense')return;
+      var t=ctx.currentTime;
+      note(scale[step%scale.length],t,0.5,'triangle',0.16);
+      if(step%4===0) note(65.41,t,0.9,'sine',0.18);        // low heartbeat
+      if(step%4===2) note(65.41,t,0.5,'sine',0.12);
+      step++;
+    },520);
+    timers.push(iv);
+  }
+  /* --- SOLEMN: warm slow arpeggio in a major key (the letter) --- */
+  function solemn(){
+    ensure();stop();current='solemn';fade(master.gain,muted?0:0.8,1.2);
+    // C major / F / Am / G feel — gentle
+    var chords=[[261.63,329.63,392.00],[349.23,440.00,523.25],[220.00,261.63,329.63],[196.00,246.94,392.00]];
+    var ci=0;
+    function bar(){
+      if(current!=='solemn')return;
+      var t=ctx.currentTime, ch=chords[ci%chords.length];
+      pad(ch.map(function(f){return f/2;}),t,3.4,0.045);
+      // twinkle arpeggio on top
+      ch.concat([ch[0]*2]).forEach(function(f,i){ note(f*2,t+i*0.42,1.2,'sine',0.10); });
+      ci++;
+    }
+    bar();var iv=setInterval(bar,3400);timers.push(iv);
+  }
+  /* --- CELEBRATION: bouncy upbeat (DEAL!) --- */
+  function party(){
+    ensure();stop();current='party';fade(master.gain,muted?0:0.85,0.3);
+    var bass=[130.81,130.81,174.61,196.00];
+    var mel=[523.25,659.25,783.99,659.25,523.25,587.33,659.25,783.99];
+    var b=0,m=0;
+    var iv=setInterval(function(){
+      if(current!=='party')return;
+      var t=ctx.currentTime;
+      note(bass[b%bass.length],t,0.22,'square',0.14);
+      note(bass[b%bass.length]/2,t,0.22,'triangle',0.12);
+      note(mel[m%mel.length],t,0.20,'square',0.10);
+      m++; if(m%2===0)b++;
+    },165);
+    timers.push(iv);
+  }
+  /* --- GENTLE close (understanding) --- */
+  function gentle(){ solemn(); }
+
+  return {
+    suspense:suspense, solemn:solemn, party:party, gentle:gentle, stop:stop, ensure:ensure,
+    toggleMute:function(){ muted=!muted; if(master) fade(master.gain, muted?0.0001:(current==='suspense'?0.55:0.8),0.3); return muted; },
+    isMuted:function(){return muted;}
+  };
+})();
+
+/* ---------- Mute button ---------- */
+document.getElementById('mute').addEventListener('click',function(){
+  var m=AudioEngine.toggleMute(); this.textContent=m?'🔇':'🔊';
+});
+
+/* ======================================================
+   FLOW
+====================================================== */
+document.getElementById('start').addEventListener('click',function(){
+  AudioEngine.ensure(); AudioEngine.suspense();
+  show('s-cases');
+});
+
+/* build cases */
+var grid=document.getElementById('grid');
+for(var i=1;i<=12;i++){
+  var b=document.createElement('button');
+  b.className='case'; b.setAttribute('aria-label','Case '+i);
+  b.innerHTML='<div class="lid"><div class="handle"></div><div class="num">'+i+'</div></div>';
+  (function(n,el){
+    el.addEventListener('click',function(){
+      el.classList.add('gone');
+      document.getElementById('caseNo').textContent=n;
+      AudioEngine.solemn();
+      openM('m-letter');
+    });
+  })(i,b);
+  grid.appendChild(b);
+}
+
+/* DEAL */
+document.getElementById('btnDeal').addEventListener('click',function(){
+  closeM('m-letter'); startDeal();
+});
+/* NO DEAL -> final answer */
+document.getElementById('btnNo').addEventListener('click',function(){
+  closeM('m-letter'); AudioEngine.gentle(); openM('m-final');
+});
+/* final: yes (no deal stands) */
+document.getElementById('finalYes').addEventListener('click',function(){
+  closeM('m-final'); AudioEngine.gentle(); openM('m-understand');
+});
+/* final: reconsider -> back to the question */
+document.getElementById('finalNo').addEventListener('click',function(){
+  closeM('m-final'); AudioEngine.solemn(); openM('m-letter');
+});
+document.getElementById('toKeepsake1').addEventListener('click',function(){
+  closeM('m-understand'); AudioEngine.gentle(); openM('m-keepsake');
+});
+document.getElementById('toKeepsake2').addEventListener('click',function(){
+  closeM('m-deal'); AudioEngine.party(); openM('m-keepsake');
+});
+
+/* ---------- DEAL celebration: 10s dance + confetti ---------- */
+function startDeal(){
+  AudioEngine.party();
+  openM('m-deal');
+  confetti(true);
+  var n=10, cd=document.getElementById('cdText');
+  cd.textContent='Brian is dancing… '+n;
+  var iv=setInterval(function(){
+    n--; cd.textContent = n>0 ? 'Brian is dancing… '+n : 'Take a bow, you two 💛';
+    if(n<=0){
+      clearInterval(iv);
+      confetti(false);
+      document.getElementById('toKeepsake2').style.display='block';
+    }
+  },1000);
+}
+
+/* keepsake reveals */
+document.querySelectorAll('.key').forEach(function(k){
+  k.addEventListener('click',function(){ k.classList.toggle('open'); });
+});
+
+/* replay */
+document.getElementById('replay').addEventListener('click',function(){
+  closeM('m-keepsake');
+  document.querySelectorAll('.case').forEach(function(c){c.classList.remove('gone')});
+  AudioEngine.suspense();
+  show('s-cases');
+});
+
+/* ======================================================
+   CONFETTI
+====================================================== */
+var cvs=document.getElementById('confetti'),cx=cvs.getContext('2d'),parts=[],raf=null;
+function sizeC(){cvs.width=innerWidth;cvs.height=innerHeight;}
+addEventListener('resize',sizeC);sizeC();
+function confetti(on){
+  if(on){
+    cvs.classList.add('on'); parts=[];
+    var cols=['#ffcf40','#ff5c8a','#34d399','#8b5cf6','#fff'];
+    for(var i=0;i<140;i++){parts.push({x:Math.random()*cvs.width,y:Math.random()*-cvs.height,
+      r:4+Math.random()*6,c:cols[i%cols.length],vy:2+Math.random()*4,vx:-2+Math.random()*4,
+      a:Math.random()*6.28,va:-.2+Math.random()*.4});}
+    if(!raf)loop();
+  } else { setTimeout(function(){cvs.classList.remove('on');parts=[];if(raf){cancelAnimationFrame(raf);raf=null;}cx.clearRect(0,0,cvs.width,cvs.height);},600); }
+}
+function loop(){
+  cx.clearRect(0,0,cvs.width,cvs.height);
+  parts.forEach(function(p){
+    p.y+=p.vy;p.x+=p.vx;p.a+=p.va;
+    if(p.y>cvs.height+20){p.y=-20;p.x=Math.random()*cvs.width;}
+    cx.save();cx.translate(p.x,p.y);cx.rotate(p.a);cx.fillStyle=p.c;
+    cx.fillRect(-p.r/2,-p.r/2,p.r,p.r*0.6);cx.restore();
+  });
+  raf=requestAnimationFrame(loop);
+}
+</script>
+</body>
+</html>
