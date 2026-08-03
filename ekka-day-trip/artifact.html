@@ -91,6 +91,15 @@
   }
   .marquee .sub{font-size:.9rem; opacity:.95; margin:6px 0 2px}
 
+  /* date-aware countdown strip */
+  .countdown{
+    text-align:center; font-family:var(--disp); font-weight:700; text-transform:uppercase;
+    letter-spacing:.14em; font-size:.74rem; color:#5a3b00;
+    background:linear-gradient(180deg,var(--gold),var(--gold-deep));
+    padding:8px 12px; border-bottom:2px solid rgba(90,59,0,.18);
+  }
+  .countdown.past{ background:linear-gradient(180deg,#ffd0dd,#ff9db6); color:#7a1030 }
+
   /* body / stub */
   .stub{padding:22px 20px 24px; min-height:230px; display:flex; flex-direction:column}
   .steplabel{
@@ -193,6 +202,8 @@
         <p class="sub" id="subtitle">One golden ticket. No refunds. 🎡</p>
       </div>
 
+      <div class="countdown" id="countdown" aria-live="polite"></div>
+
       <div class="progress" id="progress" aria-hidden="true"></div>
 
       <div class="stub" id="stub"><!-- steps render here --></div>
@@ -218,6 +229,29 @@
   /* ---------- marquee bulbs ---------- */
   var bulbWrap = document.querySelector(".bulbs");
   for (var b=0; b<14; b++){ var i=document.createElement("i"); i.style.animationDelay=(b*0.12)+"s"; bulbWrap.appendChild(i); }
+
+  /* ---------- date-aware countdown (recomputed every visit, through 14 Aug 2026) ---------- */
+  var SHOW = {y:2026, m:8, d:12};                 // Wednesday 12 August 2026
+  function ymd2date(o){ return new Date(o.y, o.m-1, o.d); }
+  function todayLocal(){ var n=new Date(); return {y:n.getFullYear(), m:n.getMonth()+1, d:n.getDate()}; }
+  var TODAY = todayLocal();
+  var DIFF = Math.round((ymd2date(SHOW) - ymd2date(TODAY)) / 86400000);  // >0 upcoming, 0 today, <0 passed
+  function rolledToToday(){ return A.day !== "swapped" && DIFF < 0; }     // same-day pick, viewed after Show Day
+  function setCountdown(){
+    var el = document.getElementById("countdown");
+    if (!el) return;
+    var txt, past = DIFF < 0;
+    if (DIFF > 7)       txt = "🎡 " + DIFF + " sleeps until Show Day";
+    else if (DIFF > 1)  txt = "🎡 " + DIFF + " sleeps to go — get hyped";
+    else if (DIFF === 1)txt = "🎡 Tomorrow's the day!";
+    else if (DIFF === 0)txt = "🎉 It's Show Day — today!";
+    else if (DIFF === -1)txt = "🎠 Show Day was yesterday — offer still stands";
+    else if (DIFF === -2)txt = "🎪 A touch late? No stress — still keen";
+    else                 txt = "🎪 This invite has wrapped — but I'd still say yes";
+    el.textContent = txt;
+    el.classList.toggle("past", past);
+  }
+  setCountdown();
 
   /* ---------- answer state ---------- */
   var A = {
@@ -508,7 +542,8 @@
     // returns {ymd:"20260812", label:"Wednesday 12 August 2026"}
     var d;
     if (A.day === "swapped" && A.swapDate){ d = new Date(A.swapDate + "T00:00:00"); }
-    else { d = new Date("2026-08-12T00:00:00"); }
+    else if (rolledToToday()){ d = ymd2date(TODAY); }   // Show Day has passed -> use today so the invite isn't in the past
+    else { d = ymd2date(SHOW); }
     var y=d.getFullYear(), m=d.getMonth()+1, day=d.getDate();
     var pad=function(n){return (n<10?"0":"")+n;};
     var ymd = y+pad(m)+pad(day);
@@ -532,7 +567,7 @@
       "EKKA Show Day trip — answers"+(NAME?(" from "+NAME):""),
       "",
       "Email: " + (A.email||"—"),
-      "Day: " + dp.label + (A.day==="swapped"?" (swapped Show Day)":""),
+      "Day: " + dp.label + (A.day==="swapped" ? " (swapped Show Day)" : (rolledToToday() ? " (Show Day had passed — set for today)" : "")),
       "Time: " + tr[2],
       "Meal: " + mealTxt,
       "Pets: " + petTxt,
@@ -569,7 +604,7 @@
       '<div class="ask">'+
       '<p class="steplabel">That\'s everything 🎉</p>'+
       '<h2 class="q">You\'re locked in'+(NAME?(", "+esc(NAME)):"")+'!</h2>'+
-      '<p class="hint" style="text-align:center">The plan: <b>'+esc(dp.label)+'</b>, '+esc(tr[2])+'.<br>Tap below to fling your answers straight into the calendar invite.</p>'+
+      '<p class="hint" style="text-align:center">The plan: <b>'+esc(dp.label)+'</b>, '+esc(tr[2])+'.'+ (rolledToToday()?'<br><em>(Show Day\'s already been — so I\'ve set this for today. A day out is a day out!)</em>':'') +'<br>Tap below to fling your answers straight into the calendar invite.</p>'+
       '<div style="display:flex;flex-direction:column;gap:12px;margin-top:18px">'+
         '<button class="btn btn-primary" id="cal" style="box-shadow:0 6px 0 #b01f3a">📅 Send it — hurl it into Google Calendar</button>'+
         '<button class="btn btn-gold" id="mail">✉️ Email me your answers instead</button>'+
